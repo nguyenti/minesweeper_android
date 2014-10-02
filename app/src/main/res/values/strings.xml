@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Minesweeper</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="size_choice">Choose a board size:</string>
+    <string name="five">5 x 5</string>
+    <string name="ten">10 x 10</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_play_minesweeper">PlayMinesweeper</string>
+    <string name="btnTextPlaceFlag">Place a flag</string>
+    <string name="restart_label">Restart</string>
+
+</resources>
