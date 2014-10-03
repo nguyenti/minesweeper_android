@@ -7,17 +7,20 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import java.util.Random;
-
 /**
- * Created by tiffanynguyen on 9/19/14.
+ * Displays the Minesweeper game
+ * by Tiffany Nguyen
  */
+
 public class MinesweeperView extends View {
+
+    /*------------------+
+     | Global variables |
+     +------------------*/
 
     private int gridSize = 10;
 
@@ -29,6 +32,10 @@ public class MinesweeperView extends View {
 
     private boolean drawFlag;
     private static final float MY_TEXT_SIZE = 30.0f;
+
+    /*------------------+
+     |   Constructor    |
+     +------------------*/
 
     public MinesweeperView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -51,7 +58,6 @@ public class MinesweeperView extends View {
         paintFlag.setStyle(Paint.Style.FILL);
         paintFlag.setColor(Color.YELLOW);
 
-
         paintText = new Paint();
         paintText.setColor(Color.BLACK);
         final float scale = getResources().getDisplayMetrics().density;
@@ -62,6 +68,10 @@ public class MinesweeperView extends View {
         MinesweeperModel instance = MinesweeperModel.getInstance();
         instance.initializeGrid(gridSize);
     }
+
+    /*------------------+
+     |      Methods     |
+     +------------------*/
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -89,9 +99,9 @@ public class MinesweeperView extends View {
     private void drawPlays(Canvas canvas) {
         for (int i = 0; i < gridSize; i++) {
             for (int j = 0; j < gridSize; j++) {
-                Unit instance = MinesweeperModel.getInstance().getFieldContent(i, j);
+                Cell instance = MinesweeperModel.getInstance().getFieldContent(i, j);
                 if (instance.isClicked()) {
-                   if (instance.getValue() == MinesweeperModel.MINE) {
+                    if (instance.getValue() == MinesweeperModel.MINE) {
                         canvas.drawLine(i * getWidth() / gridSize, j * getHeight() / gridSize,
                                 (i + 1) * getWidth() / gridSize,
                                 (j + 1) * getHeight() / gridSize, paintMine);
@@ -105,16 +115,16 @@ public class MinesweeperView extends View {
                                 paintText);
 
                     }
-                } else if (instance.isFlagged()) {
+                } if (instance.isFlagged()) {
                     Point point1_draw = new Point(scaleToGrid(i,j).getX(),scaleToGrid(i,j+1).getY());
                     Point point2_draw = new Point(scaleToGrid(i ,j).getX(),scaleToGrid(i,j).getY());
                     Point point3_draw = new Point(scaleToGrid(i+1, j).getX(), scaleToGrid(i,j+1).getY());
                     Path path = new Path();
                     path.setFillType(Path.FillType.EVEN_ODD);
-                        path.moveTo(point1_draw.x,point1_draw.y);
-                        path.lineTo(point2_draw.x,point2_draw.y);
-                        path.lineTo(point3_draw.x,point3_draw.y);
-                        path.lineTo(point1_draw.x,point1_draw.y);
+                    path.moveTo(point1_draw.x,point1_draw.y);
+                    path.lineTo(point2_draw.x,point2_draw.y);
+                    path.lineTo(point3_draw.x,point3_draw.y);
+                    path.lineTo(point1_draw.x,point1_draw.y);
                     path.close();
                     canvas.drawPath(path, paintFlag);
                 }
@@ -126,8 +136,9 @@ public class MinesweeperView extends View {
         return new Coordinate((x * getWidth()) / gridSize, (y * getHeight()) / gridSize);
     }
 
-    public void setFlagger(boolean f) {
+    public boolean setFlagger(boolean f) {
         drawFlag = f;
+        return drawFlag;
     }
 
     @Override
@@ -137,13 +148,15 @@ public class MinesweeperView extends View {
             int tX = ((int) event.getX()) / (getWidth() / gridSize);
             int tY = ((int) event.getY()) / (getHeight() / gridSize);
 
-            Unit msModel = MinesweeperModel.getInstance().getFieldContent(tX, tY);
+            Cell msModel = MinesweeperModel.getInstance().getFieldContent(tX, tY);
             if (tX < gridSize && tY < gridSize && !msModel.isClicked()) {
                 if (drawFlag == false) {
-                    msModel.setClicked();
-                    if (msModel.getValue() == MinesweeperModel.MINE) {
-                        MinesweeperModel.getInstance().clickAll();
-                        Toast.makeText(getContext(), "You lose...", Toast.LENGTH_LONG).show();
+                    if (!msModel.isFlagged()) {
+                        msModel.toggleClicked();
+                        if (msModel.getValue() == MinesweeperModel.MINE) {
+                            MinesweeperModel.getInstance().clickAll();
+                            Toast.makeText(getContext(), "You lose...", Toast.LENGTH_LONG).show();
+                        }
                     }
                 } else {
                     msModel.toggleFlagged();

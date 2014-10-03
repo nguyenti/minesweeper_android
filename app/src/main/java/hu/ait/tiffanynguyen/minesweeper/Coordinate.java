@@ -1,12 +1,21 @@
 package hu.ait.tiffanynguyen.minesweeper;
 
 /**
- * Created by tiffanynguyen on 9/21/14.
+ * Coordinate class contains the x,y coordinate
+ * by Tiffany Nguyen
  */
 public class Coordinate {
 
+    /*------------------+
+     |    Properties    |
+     +------------------*/
+
     int x;
     int y;
+
+    /*------------------+
+     |   Constructors   |
+     +------------------*/
 
     Coordinate(int x, int y) {
         this.x = x;
@@ -15,6 +24,9 @@ public class Coordinate {
 
     Coordinate() {}
 
+    /*------------------+
+     |     Methods      |
+     +------------------*/
     public int getX() {
         return this.x;
     }

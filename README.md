@@ -1,7 +1,7 @@
-minesweeper_android
+Minesweeper Android
 ===================
 
-Android application to learn about using a canvas as well as creating your own view.
+Android application to learn about using a canvas as well as creating your own view. Created for Mobile development course.
 
 Implemented: display of mines, numbers, and flags; detect loss
 

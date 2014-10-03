@@ -1,19 +1,31 @@
 package hu.ait.tiffanynguyen.minesweeper;
 
 /**
- * Created by tiffanynguyen on 9/30/14.
+ * Cell class holds a value and whether the cell has been clicked or flagged
+ * by Tiffany Nguyen
  */
-public class Unit {
+public class Cell {
+    /*------------------+
+     |    Properties    |
+     +------------------*/
 
     int value;
     boolean clicked;
     boolean flagged;
 
-    Unit() {
+    /*------------------+
+     |   Constructor    |
+     +------------------*/
+
+    Cell() {
         value = 0;
         clicked = false;
         flagged = false;
     }
+
+    /*------------------+
+     |     Methods      |
+     +------------------*/
 
     public int getValue() {
         return value;
@@ -35,13 +47,12 @@ public class Unit {
         return flagged;
     }
 
-    public void setClicked() {
+    public void toggleClicked() {
         clicked = !clicked;
     }
 
-    public boolean toggleFlagged() {
+    public void toggleFlagged() {
         flagged = !flagged;
-        return !flagged;
     }
 
     @Override
