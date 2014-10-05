@@ -48,7 +48,8 @@ public class Cell {
     }
 
     public void toggleClicked() {
-        clicked = !clicked;
+//        clicked = !clicked;
+        clicked = true;
     }
 
     public void toggleFlagged() {

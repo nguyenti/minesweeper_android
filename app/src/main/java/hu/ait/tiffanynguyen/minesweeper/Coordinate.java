@@ -35,6 +35,10 @@ public class Coordinate {
         return this.y;
     }
 
+    public Integer coordToInt(int scale)  {
+        return (x + (y * scale));
+    }
+
     public Coordinate intToCoord(int val, int scale) {
         int x = val % scale;
         int y = (val - x) / scale;

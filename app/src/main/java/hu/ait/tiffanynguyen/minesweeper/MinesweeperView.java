@@ -22,7 +22,7 @@ public class MinesweeperView extends View {
      | Global variables |
      +------------------*/
 
-    private int gridSize = 10;
+    private int gridSize = 5; // 10
 
     private Paint paintBg;
     private Paint paintLine;
@@ -31,7 +31,8 @@ public class MinesweeperView extends View {
     private Paint paintText;
 
     private boolean drawFlag;
-    private static final float MY_TEXT_SIZE = 30.0f;
+    private static final float MY_TEXT_SIZE = 50.0f;
+    private int mineCount = 0;
 
     /*------------------+
      |   Constructor    |
@@ -115,16 +116,16 @@ public class MinesweeperView extends View {
                                 paintText);
 
                     }
-                } if (instance.isFlagged()) {
-                    Point point1_draw = new Point(scaleToGrid(i,j).getX(),scaleToGrid(i,j+1).getY());
-                    Point point2_draw = new Point(scaleToGrid(i ,j).getX(),scaleToGrid(i,j).getY());
-                    Point point3_draw = new Point(scaleToGrid(i+1, j).getX(), scaleToGrid(i,j+1).getY());
+                } else if (instance.isFlagged()) {
+                    Point point1_draw = new Point(scaleToGrid(i, j).getX(), scaleToGrid(i, j + 1).getY());
+                    Point point2_draw = new Point(scaleToGrid(i, j).getX(), scaleToGrid(i, j).getY());
+                    Point point3_draw = new Point(scaleToGrid(i + 1, j).getX(), scaleToGrid(i, j + 1).getY());
                     Path path = new Path();
                     path.setFillType(Path.FillType.EVEN_ODD);
-                    path.moveTo(point1_draw.x,point1_draw.y);
-                    path.lineTo(point2_draw.x,point2_draw.y);
-                    path.lineTo(point3_draw.x,point3_draw.y);
-                    path.lineTo(point1_draw.x,point1_draw.y);
+                    path.moveTo(point1_draw.x, point1_draw.y);
+                    path.lineTo(point2_draw.x, point2_draw.y);
+                    path.lineTo(point3_draw.x, point3_draw.y);
+                    path.lineTo(point1_draw.x, point1_draw.y);
                     path.close();
                     canvas.drawPath(path, paintFlag);
                 }
@@ -147,19 +148,43 @@ public class MinesweeperView extends View {
 
             int tX = ((int) event.getX()) / (getWidth() / gridSize);
             int tY = ((int) event.getY()) / (getHeight() / gridSize);
-
+            MinesweeperModel grid = MinesweeperModel.getInstance();
             Cell msModel = MinesweeperModel.getInstance().getFieldContent(tX, tY);
             if (tX < gridSize && tY < gridSize && !msModel.isClicked()) {
                 if (drawFlag == false) {
                     if (!msModel.isFlagged()) {
                         msModel.toggleClicked();
+                        grid.clickedCount++;
                         if (msModel.getValue() == MinesweeperModel.MINE) {
-                            MinesweeperModel.getInstance().clickAll();
-                            Toast.makeText(getContext(), "You lose...", Toast.LENGTH_LONG).show();
+                            grid.clickAll();
+                            Toast.makeText(getContext(), "You lose. You clicked a mine.", Toast.LENGTH_LONG).show();
+                            mineCount = 0;
+                        } else {
+                            try {
+                                grid.removeZeroBlock(tX, tY);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } else {
-                    msModel.toggleFlagged();
+                    if (msModel.getValue() != MinesweeperModel.MINE) {
+                        grid.clickAll();
+                        Toast.makeText(getContext(), "You lose. You flagged a normal number.", Toast.LENGTH_LONG).show();
+                        mineCount = 0;
+                    } else {
+                        if (!msModel.isFlagged()) {
+                            mineCount++;
+                        } else {
+                            mineCount--;
+                        }
+                        msModel.toggleFlagged();
+                        if (mineCount == grid.numberOfMines) {
+                            grid.clickAll();
+                            Toast.makeText(getContext(), "You win!", Toast.LENGTH_LONG).show();
+                            mineCount = 0;
+                        }
+                    }
                 }
             }
             invalidate();
