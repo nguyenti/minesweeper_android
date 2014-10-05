@@ -144,62 +144,42 @@ public class MinesweeperModel {
         return clickedCount == (gridSize * gridSize - numberOfMines);
     }
 
-    public void removeZeroBlock(int x, int y) throws InterruptedException {
-        LinkedBlockingQueue<Integer> toVisit = new LinkedBlockingQueue<Integer>(gridSize*gridSize);
-//        LinkedHashSet<Coordinate> visited = new LinkedHashSet<Coordinate>();
+    public boolean removeZeroBlock(int x, int y) throws InterruptedException {
+        LinkedBlockingQueue<Integer> toVisit = new LinkedBlockingQueue<Integer>(gridSize * gridSize);
 
         toVisit.put(new Coordinate(x, y).coordToInt(gridSize));
-//        boolean first = (grid[y][x].getValue() != 0); // check that the first clicked element is not 0
 
         while (!toVisit.isEmpty()) {
             int thing = toVisit.poll();
             Coordinate it = new Coordinate().intToCoord(thing, gridSize);
-//            Coordinate[] coords = new Coordinate[8];
-
-            Log.i("LOG_ELEMENT", "NEW ELEMENT----------------------- \n at " + it.getY() + ' ' + it.getX());
-
             int val = grid[it.getY()][it.getX()].getValue();
-//            Log.i("LOG_THE_VALUE", Integer.toString(val));
 
             for (int i = -1; i < 2; i++) {
                 for (int j = -1; j < 2; j++) {
                     try {
                         // check if index does not exceed bounds. Should fail if it does
                         Cell cell = grid[it.getY() + i][it.getX() + j];
-                        Log.i("LOG_VALUE", "BEFORE \n" + (it.getY() + i) + " " + (it.getX() + j)
-                                + " int " + it.coordToInt(gridSize) + "\n val: " + val + " cur: "
-                                + cell.toString() + "\n click: " + cell.isClicked()
-                                + " flag: " + cell.isFlagged() + "\n val zero: " + (val == 0)
-                                + " cell zero: " + (cell.getValue() == 0));
 
                         int p = new Coordinate(it.getX() + j, it.getY() + i).coordToInt(gridSize);
                         if (!cell.isClicked() && !cell.isFlagged()) {
                             if (cell.getValue() == 0) {
-//                            coords[count++] = new Coordinate(y + i, x + j);
                                 toVisit.put(p);
                                 grid[it.getY() + i][it.getX() + j].toggleClicked();
+                                clickedCount++;
                             } else if (val == 0) {
-//                                if (first) {
-//                                    toVisit.put(new Coordinate(it.getY() + i, it.getX() + j).coordToInt(gridSize));
-//                                    first = false;
-//                                }
                                 grid[it.getY() + i][it.getX() + j].toggleClicked();
+                                clickedCount++;
                             }
                         }
-                        Log.i("LOG_VALUE", "\n" +  (it.getY() + i) + " " + (it.getX() + j)
-                                + " intcoord: " + p + " val: " + val + " cur: " +
-                                cell.toString() + "\n click: " + cell.isClicked()
-                                + " flag: " + cell.isFlagged() + "\n val zero: " + (val == 0)
-                                + " cell zero: " + (cell.getValue() == 0));
                     } catch (ArrayIndexOutOfBoundsException e) {
                         // deal with the instances that the cell at [y+i][x+j] is next to a wall
                         // and does not have a cell at the location
-                        Log.i("LOG_OUTOFBOUNDS", "Out of bounds at " + (it.getY() + i) + " " + (it.getX() + j));
                         continue;
                     }
                 }
             }
         }
+        return checkWin();
     }
 
 }

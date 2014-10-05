@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -159,9 +160,20 @@ public class MinesweeperView extends View {
                             grid.clickAll();
                             Toast.makeText(getContext(), "You lose. You clicked a mine.", Toast.LENGTH_LONG).show();
                             mineCount = 0;
+                            grid.clickedCount = 0;
+                        } else if (grid.checkWin()) {
+                            grid.clickAll();
+                            Toast.makeText(getContext(), "You win!", Toast.LENGTH_LONG).show();
+                            mineCount = 0;
+                            grid.clickedCount = 0;
                         } else {
                             try {
-                                grid.removeZeroBlock(tX, tY);
+                                if (grid.removeZeroBlock(tX, tY)) {
+                                    grid.clickAll();
+                                    Toast.makeText(getContext(), "You win!", Toast.LENGTH_LONG).show();
+                                    mineCount = 0;
+                                    grid.clickedCount = 0;
+                                }
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -172,6 +184,7 @@ public class MinesweeperView extends View {
                         grid.clickAll();
                         Toast.makeText(getContext(), "You lose. You flagged a normal number.", Toast.LENGTH_LONG).show();
                         mineCount = 0;
+                        grid.clickedCount = 0;
                     } else {
                         if (!msModel.isFlagged()) {
                             mineCount++;
@@ -183,6 +196,7 @@ public class MinesweeperView extends View {
                             grid.clickAll();
                             Toast.makeText(getContext(), "You win!", Toast.LENGTH_LONG).show();
                             mineCount = 0;
+                            grid.clickedCount = 0;
                         }
                     }
                 }
@@ -192,6 +206,7 @@ public class MinesweeperView extends View {
 
         return true;
     }
+
 
     // to keep the width and height as a square
     @Override
